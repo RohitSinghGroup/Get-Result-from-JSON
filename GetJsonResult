@@ -1,0 +1,56 @@
+public Void callJSONApi() throws Exception {
+		BufferedReader br = null;
+		InputStream	inputStream = null;
+		HttpURLConnection conn = null;
+		try {
+		
+			String from = URLEncoder.encode("CustomerID","UTF-8");
+			String to = URLEncoder.encode("PolicyNo","UTF-8");
+			URL url = new URL("http://yourapiurl.com/putyourapi/search/?"+"from="+from+"&to="+to);
+			conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("GET");
+			conn.setRequestProperty("Accept", "application/json");
+			conn.setRequestProperty("Content-Type", "application/json");
+			if (conn.getResponseCode() != 200) {
+				throw new RuntimeException("Failed : HTTP error code : "
+						+ conn.getResponseCode());
+			}
+			 br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+			String output;
+			StringBuffer buffer = new StringBuffer();
+			while ((output = br.readLine()) != null) {
+				buffer.append(output);
+			}
+			String responseData= buffer.toString();
+			 JSONObject jsonObject1 = new JSONObject(responseData);
+	            JSONObject jsonObject2 = jsonObject1.getJSONObject("status");
+	            String status = jsonObject2.getString("status");
+	          if(status.equals("SUCCESS")){
+	        	  	// you code here
+	          }
+	          
+		  } catch (Exception e) {
+			  e.getMessage();
+		  }
+		finally {
+			if(br!=null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+			}
+			if(inputStream!=null) {
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if(conn!=null) {
+				conn.disconnect();
+			}
+		}
+		return null;
+	}
